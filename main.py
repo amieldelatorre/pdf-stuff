@@ -87,8 +87,8 @@ def search(path, search_string):
 
     for pageNum in range(reader.numPages):
         page = reader.getPage(pageNum)
-        text = page.extractText().lower().encode('ascii', 'ignore')
-        if search_string.lower() in text.decode('ascii'):
+        text = page.extractText().lower()
+        if search_string.lower() in text:
             pages.append(pageNum + 1)
     
     print('The search word was:', search_string)
