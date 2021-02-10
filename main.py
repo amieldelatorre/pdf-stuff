@@ -85,15 +85,15 @@ def search(path, search_string):
     file = open(path, 'rb')
     reader = PyPDF2.PdfFileReader(file)
 
-    for pageNum in range(0, reader.numPages):
+    for pageNum in range(reader.numPages):
         page = reader.getPage(pageNum)
-        text = page.extractText().lower()
-        if search_string.lower() in text:
-            pages.append(pageNum)
+        text = page.extractText().lower().encode('ascii', 'ignore')
+        if search_string.lower() in text.decode('ascii'):
+            pages.append(pageNum + 1)
     
-    print(pages)
-    print(len(pages))
-
+    print('The search word was:', search_string)
+    print('The pages containing the word:', pages)
+    print('The amount of pages containing th word:', len(pages))
     return
 
     
