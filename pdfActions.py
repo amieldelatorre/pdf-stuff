@@ -2,45 +2,40 @@ import PyPDF2
 import sys
 import os
 import time
-import argparse
+import threading 
 
-def main():
-    path = ""
-    search_string = None
-    output_file_name = None
+def process_input(path, output_file_name, search_string):
+    if path == "" or path == None: 
+        print("Path cannot be none or empty string!")
+        return
+    
+    if output_file_name == "":
+        output_file_name = None
+    if search_string == "":
+        search_string = None
 
-    parser = argparse.ArgumentParser(description="Merge a folder's pdf files. Having both -m and -f arguments will find the string in the resulting merged file.")
-
-    parser.add_argument('path', type=str, help='Path to folder or file.')
-    parser.add_argument('-m', '--merge', type=str, help='Merge files in a folder. Please provide the file name to merge to.')
-    parser.add_argument('-f', '--find', type=str, help='Find a specific string in a pdf. Please provide the string to search.')
-
-
-    args = parser.parse_args()
-    path = args.path
-    search_string = args.find
-    output_file_name = args.merge
-
-    if args.merge != None and os.path.isdir(path) and search_string == None:
+    if output_file_name != None and os.path.isdir(path) and search_string == None:
         if output_file_name.endswith('.pdf') == False:
             output_file_name += ".pdf"
         merge(path, output_file_name)
-    elif args.merge != None and os.path.isdir(path) == False and search_string == None:
+    elif output_file_name != None and os.path.isdir(path) == False and search_string == None:
         print('Path must point to a folder if the -m option is being used!')
-    elif args.merge == None and os.path.isfile(path) and search_string != None:
+    elif output_file_name == None and os.path.isfile(path) and search_string != None:
         search(path, search_string)
-    elif args.merge == None and os.path.isfile(path) == False and search_string != None:
+    elif output_file_name == None and os.path.isfile(path) == False and search_string != None:
         print(os.path.isfile(path))
         print('Path must point to a pdf file if the -f option is being used!')
-    elif args.merge != None and os.path.isdir(path) == False and search_string != None:
+    elif output_file_name != None and os.path.isdir(path) == False and search_string != None:
         print('Path must point to a folder if the -f and -m options are being used!')
-    elif args.merge != None and os.path.isdir(path) and search_string != None:
+    elif output_file_name != None and os.path.isdir(path) and search_string != None:
         if output_file_name.endswith('.pdf') == False:
             output_file_name += ".pdf"
-        merge(path, output_file_name)
-        search(path + "/" + output_file_name, search_string)
-    
-    exit()
+        merge_thread = threading.Thread(target=merge(path, output_file_name))
+        search_thread = threading.Thread(target=search(path + "/" + output_file_name, search_string))
+        merge_thread.start()
+        search_thread.start()
+    return
+
 
 def merge(path, output_file_name):
     start = time.time()
@@ -68,13 +63,14 @@ def merge(path, output_file_name):
     output_file.close()
     end = time.time()
     print('Done!')
-    print('Time elapsed ==', end - start)
     print('The name of the merged file is', output_file_name)
+    print('Time elapsed ==', end - start)
 
     return
 
 
 def search(path, search_string):
+    start = time.time()
     search_string = search_string.lower()
     if path.endswith('.pdf') == False:
         print("The file referenced is not a pdf file.")
@@ -91,10 +87,11 @@ def search(path, search_string):
         if search_string.lower() in text:
             pages.append(pageNum + 1)
     
+    end = time.time()
+
     print('The search word was:', search_string)
     print('The pages containing the word:', pages)
-    print('The amount of pages containing th word:', len(pages))
+    print('The number of pages containing the word:', len(pages))
+    print('Time elapsed ==', end - start)
+    file.close()
     return
-
-    
-main()
