@@ -1,8 +1,5 @@
 import PyPDF2
-import sys
-import os
-import time
-import threading 
+import sys, os, time, threading
 
 def process_input(path, output_file_name, search_string):
     if path == "" or path == None: 
@@ -30,10 +27,9 @@ def process_input(path, output_file_name, search_string):
     elif output_file_name != None and os.path.isdir(path) and search_string != None:
         if output_file_name.endswith('.pdf') == False:
             output_file_name += ".pdf"
-        merge_thread = threading.Thread(target=merge(path, output_file_name))
-        search_thread = threading.Thread(target=search(path + "/" + output_file_name, search_string))
-        merge_thread.start()
-        search_thread.start()
+        merge(path, output_file_name)
+        search(path + "/" + output_file_name, search_string)
+        
     return
 
 
