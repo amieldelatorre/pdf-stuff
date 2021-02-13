@@ -11,26 +11,31 @@ def process_input(path, output_file_name, search_string):
     if search_string == "":
         search_string = None
 
+    result = ""
+
     if output_file_name != None and os.path.isdir(path) and search_string == None:
         if output_file_name.endswith('.pdf') == False:
             output_file_name += ".pdf"
-        merge(path, output_file_name)
+        result = merge(path, output_file_name)
     elif output_file_name != None and os.path.isdir(path) == False and search_string == None:
-        print('Path must point to a folder if the -m option is being used!')
+        result = 'Path must point to an existing folder!'
+        print(result)
     elif output_file_name == None and os.path.isfile(path) and search_string != None:
-        search(path, search_string)
+        result = search(path, search_string)
     elif output_file_name == None and os.path.isfile(path) == False and search_string != None:
-        print(os.path.isfile(path))
-        print('Path must point to a pdf file if the -f option is being used!')
+        result = 'Path must point to an existing pdf file!'
+        print(result)
     elif output_file_name != None and os.path.isdir(path) == False and search_string != None:
-        print('Path must point to a folder if the -f and -m options are being used!')
+        result = 'Path must point to an existing folder if merging and searching!'
+        print(result)
     elif output_file_name != None and os.path.isdir(path) and search_string != None:
+        print(output)
         if output_file_name.endswith('.pdf') == False:
             output_file_name += ".pdf"
-        merge(path, output_file_name)
-        search(path + "/" + output_file_name, search_string)
+        result = merge(path, output_file_name)
+        result += search(path + "/" + output_file_name, search_string)
         
-    return
+    return result
 
 
 def merge(path, output_file_name):
@@ -58,11 +63,10 @@ def merge(path, output_file_name):
 
     output_file.close()
     end = time.time()
-    print('Done!')
-    print('The name of the merged file is', output_file_name)
-    print('Time elapsed ==', end - start)
+    result = 'Done!\n' + 'The name of the merged file is ' + output_file_name + ".\nTime taken to merge: " + str(round(end - start, 2)) + " seconds.\n"
+    print(result)
 
-    return
+    return result
 
 
 def search(path, search_string):
@@ -85,9 +89,8 @@ def search(path, search_string):
     
     end = time.time()
 
-    print('The search word was:', search_string)
-    print('The pages containing the word:', pages)
-    print('The number of pages containing the word:', len(pages))
-    print('Time elapsed ==', end - start)
+    result = ('The search word was: ' + search_string + '.\nThe number of pages containing the word: ' + str(len(pages)) + '\nThe pages containing the word: ' + 
+    ', '.join(str(e) for e in pages) + '\nTime taken for search: ' + str(round(end - start, 2)) + ' seconds.')
+    print(result)
     file.close()
-    return
+    return result

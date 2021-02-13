@@ -26,7 +26,7 @@
                 id: path
                 multiline: False
                 size_hint_x:None
-                width:500
+                width:900
 
             Label:
                 text: "Output File Name"
@@ -34,7 +34,7 @@
                 id: output_file_name
                 multiline: False
                 size_hint_x:None
-                width:500
+                width:900
 
             Label:
                 text: "Search"
@@ -42,7 +42,7 @@
                 id: search_string
                 multiline: False
                 size_hint_x:None
-                width:500
+                width:900
 
         Button:
             text: "Submit"
@@ -53,4 +53,16 @@
             width:100
             on_press: root.press()
 
+<PopupBox>
+    pop_up_text: _pop_up_text
+    size_hint: .7, .7
+    auto_dismiss: True
+    title: 'Status'   
+
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            id: _pop_up_text
+            text: ''
+            text_size: self.width, None
 
